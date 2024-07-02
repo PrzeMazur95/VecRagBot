@@ -1,8 +1,9 @@
 import chromadb
-import sys
+from chromadb.config import Settings
 import time
 
-from chromadb.config import Settings
+print("Wait 10 second for ChromaDB instantiate")
+time.sleep(10)
 
 chroma_client = chromadb.HttpClient(host="chroma", port = 8000, settings=Settings(allow_reset=True, anonymized_telemetry=False))
 documents = [
@@ -22,9 +23,7 @@ documents = [
     "Black Widow, portrayed by Scarlett Johansson, is a skilled spy and assassin in the Marvel Cinematic Universe.",
     "The character of Iron Man, played by Robert Downey Jr., kickstarted the immensely successful Marvel movie franchise in 2008."
 ]
-metadatas = [{'source': "Space"}, {'source': "Space"}, {'source': "Space"}, {'source': "History"}, {'source': "History"}, 
-{'source': "History"}, {'source': "Animals"}, {'source': "Animals"}, {'source': "Animals"}, {'source': "Movies"}, 
-{'source': "Movies"}, {'source': "Movies"}, {'source': "Superheroes"}, {'source': "Superheroes"}, {'source': "Superheroes"}]
+metadatas = [{'source': "Space"}, {'source': "Space"}, {'source': "Space"}, {'source': "History"}, {'source': "History"}, {'source': "History"}, {'source': "Animals"}, {'source': "Animals"}, {'source': "Animals"}, {'source': "Movies"}, {'source': "Movies"}, {'source': "Movies"}, {'source': "Superheroes"}, {'source': "Superheroes"}, {'source': "Superheroes"}]
 ids = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"]
 
 collection_status = False
@@ -33,17 +32,32 @@ while collection_status != True:
         document_collection = chroma_client.get_or_create_collection(name="sample_collection")
         collection_status = True
     except Exception as e:
-        print(f"An error occurred: {e}")
-        time.sleep(5)
-        sys.exit(1)
+        pass
 
 document_collection.add(documents=documents, metadatas=metadatas, ids=ids)
 
-query = "Lord of the rings"
-results = document_collection.query(query_texts="Give me some facts about " + query , n_results=3)
-print("")
-print(results)
-print("")
-result_documents = results["documents"][0]
-for doc in result_documents:
-    print(doc)
+firstTimeOpened = True
+
+while(True):
+
+    if firstTimeOpened != False:
+        print('Wait 5 seconds for connection to ChromaDB...')
+        time.sleep(5)
+        firstTimeOpened = False
+
+    query = input("About what would you like to watch a movie?: ")
+    results = document_collection.query(query_texts=query , n_results=3)
+
+    result_documents = results["documents"][0]
+    for doc in result_documents:
+        print(doc)
+
+    keepAsking = input("Do you have another question?[Y/n]: ")
+
+    if keepAsking == 'Y' :
+        continue
+    elif keepAsking == 'n' :
+        print('See you again!')
+        break
+    else :
+        continue
