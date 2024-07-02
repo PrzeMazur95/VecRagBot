@@ -1,17 +1,19 @@
 services:
   pythonapp:
+    container_name: vecragbot
     build: ./python/
-    command: sh -c "sleep 10s ; python3 ./main.py"
+    stdin_open: true # Keeps the container open to receive user input
+    tty: true # Allocates a pseudo-terminal for the container    
     volumes:
       - ./python:/usr/app/src
 
   chroma:
+    container_name: chroma
     image: ghcr.io/chroma-core/chroma:latest
     volumes:
       - index_data:/chroma/.chroma/index
     ports:
       - 8000:8000
-  
 
 volumes:
   index_data:
