@@ -1,7 +1,6 @@
+# Vector Search App for CSV Data
 
-# Vector Search App with Qdrant
-
-This project demonstrates a simple vector search application using Qdrant to query through six statically vectorized cities. Follow the instructions below to set up and run the application.
+This project demonstrates a vector search application that queries through a provided list of 100 foods in a `food.csv` file. After running the commands below, you will be prompted to provide a text input, and the app will return the closest similar food entry from the database.
 
 ## Prerequisites
 
@@ -10,9 +9,19 @@ Make sure you have the following installed:
 - Docker
 - Docker Compose
 
-## Overview
+## CSV File Format
 
-After running the commands below, you'll be able to see the closest stored city in Qdrant to a provided query vector in your terminal.
+You can customize the `food.csv` file as needed, but ensure it follows the proper format. All fields must be provided in the following order:
+
+```
+Name,Calories,Fat,Protein,Carbohydrate,Sugar,Fiber
+```
+
+### Example Entry:
+
+```
+Rose donuts,356,11,7.1,56,50,1.2
+```
 
 ## Setup Instructions
 
@@ -43,7 +52,8 @@ If you've previously set up the project and want to start fresh, you'll need to 
    ```
 
    - This command will rebuild images if they already exist, ensuring the containers run on the correct images.
-   - If no previous images exist, new ones will be created.
+   - If no previous images exist, new ones will be created. 
+   - It will take a while for docker to download and install all necessary dependencies, sentence-transformers package is huge. 
 
 ### Step 3: Run the Vector Search
 
@@ -59,10 +69,33 @@ If you've previously set up the project and want to start fresh, you'll need to 
    python3 ./main.py
    ```
 
-   - This script installs all necessary data, creates a collection in Qdrant, feeds it with six statically vectorized cities, and returns the nearest point from the provided vector in `main.py`.
+   - This script installs all necessary data, creates a collection in Qdrant, vectorizes the data stored in `food.csv`, uploads it to the database, prompts you with a question, and then returns the nearest found answer.
 
-## Conclusion
+### Step 4: Updating the CSV and Rerunning the Script
 
-You should now have a fully functioning vector search application running on Qdrant, capable of querying and finding the closest city to a provided vector. Enjoy exploring the capabilities of Qdrant with this example!
+If you add new food entries to the `food.csv` file, rerun the script to update the database:
 
-![app_visualisation](./doc/app_visualisation.png)
+```sh
+python3 ./main.py
+```
+
+## Qdrant UI
+
+You can manage collections, points, and other database entities using the Qdrant UI:
+
+[http://localhost:6333/dashboard](http://localhost:6333/dashboard)
+
+## Embedding Model
+
+The application uses the following model to create embeddings:
+
+[https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)
+
+1. Containers starting process
+![containers_starting_process](./doc/containers_starting_process.png)
+
+2. App initialization
+![app_initialization](./doc/app_initialization.png)
+
+3. Querying through provided file
+![querying_provided_file](./doc/started_app.png)
