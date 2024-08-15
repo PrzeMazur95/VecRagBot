@@ -65,4 +65,4 @@ If you've previously set up the project and want to start fresh, you'll need to 
 
 You should now have a fully functioning vector search application running on Qdrant, capable of querying and finding the closest city to a provided vector. Enjoy exploring the capabilities of Qdrant with this example!
 
-![app_visualisation](.doc/app_visualisation.png)
+![app_visualisation](./doc/app_visualisation.png)
