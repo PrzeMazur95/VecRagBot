@@ -1,19 +1,20 @@
 services:
   pythonapp:
     container_name: vecragbot
-    build: ./python/
+    build: ./python/  
     stdin_open: true # Keeps the container open to receive user input
-    tty: true # Allocates a pseudo-terminal for the container    
+    tty: true # Allocates a pseudo-terminal for the container
     volumes:
       - ./python:/usr/app/src
 
-  chroma:
-    container_name: chroma
-    image: ghcr.io/chroma-core/chroma:latest
-    volumes:
-      - index_data:/chroma/.chroma/index
+  qdrant:
+    container_name: qdrant
+    image: qdrant/qdrant:latest
     ports:
-      - 8000:8000
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - ./qdrant_data:/qdrant/storage
 
 volumes:
   index_data:

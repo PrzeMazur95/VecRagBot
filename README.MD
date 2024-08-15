@@ -1,39 +1,68 @@
-you need to have installed docker and docker compose
 
-App works as a vector search, querying through provided 10 strings. Interactive shell will ask you a question.
-After answering the question, you should be able to see 3 closest answers based on stored data provided in main.py list. Change the data in [6-20 line], rebuild the app, to create new embeddings, then in interactive terminal type question connected to that data you changed. You will see 3 closest answer based on your data. You can also change the metadata, but it is not used for now in the result. 
+# Vector Search App with Qdrant
 
-1. Start the app : 
-    - in main folder run in terminal : docker compose up --build -d
+This project demonstrates a simple vector search application using Qdrant to query through six statically vectorized cities. Follow the instructions below to set up and run the application.
 
-If you changed the project/branch, and you have already created images/containers please remove them before starting new project from other branch, in terminal :
+## Prerequisites
 
-    - "docker container ps -a" : find your 2 containers ids
+Make sure you have the following installed:
 
-    - "docker stop pythonContainerId chromaContainerId && docker rm pythonContainerId chromaContainerId"
+- Docker
+- Docker Compose
 
-    - "docker rmi vecragbot-pythonapp" - to remove built pythonapp image
+## Overview
 
-And the last command to run is : "docker compose up --build -d" 
+After running the commands below, you'll be able to see the closest stored city in Qdrant to a provided query vector in your terminal.
 
-- it will rebuild already created images, to be sure we build containers on proper images If you do not have any, it will create new one, if you have some, old will be replaced with new one
+## Setup Instructions
 
-Succesfully build app process : 
+### Step 1: Clean Up Existing Docker Containers and Images
 
-![Build Process](./doc/build_process.png)
+If you've previously set up the project and want to start fresh, you'll need to remove any existing Docker containers and images.
 
-After successfully creating the containers :
+1. **Find Container IDs:**
+   ```sh
+   docker container ps -a
+   ```
 
-    - get into the vecrabot container, type in the console : "docker exec -it vecragbot sh" - it will take you to the console inside the container
+2. **Stop and Remove Containers:**
+   ```sh
+   docker stop vecragbot qdrant && docker rm vecragbot qdrant
+   ```
 
-    - next, type in the container terminal "python3 ./main.py" - it will take a while for chromadb to pull the LLM for creating embeddings, time of this process is related to your internet connection
-    - After that, it will start to getting your input, and based on that return 3 closest matches. 
+3. **Remove the Python App Image:**
+   ```sh
+   docker rmi vecragbot-pythonapp
+   ```
 
-Here is the visualisation of the process inside the vecragbot container : 
+### Step 2: Start the Application
 
-![App Process](./doc/app_visualisation.png)
-1. You go into the python app container
-2. LLM is being downloaded
-3. Console asks you a question
-4. It returns 3 colsest matches stored in main.py file list. 
-5. Question is repeated. 
+1. **Build and Start the Containers:**
+   ```sh
+   docker compose up --build -d
+   ```
+
+   - This command will rebuild images if they already exist, ensuring the containers run on the correct images.
+   - If no previous images exist, new ones will be created.
+
+### Step 3: Run the Vector Search
+
+1. **Access the `vecragbot` Container:**
+   Open a new terminal window and run:
+   ```sh
+   docker exec -it vecragbot sh
+   ```
+
+2. **Execute the Python Script:**
+   In the container terminal, run:
+   ```sh
+   python3 ./main.py
+   ```
+
+   - This script installs all necessary data, creates a collection in Qdrant, feeds it with six statically vectorized cities, and returns the nearest point from the provided vector in `main.py`.
+
+## Conclusion
+
+You should now have a fully functioning vector search application running on Qdrant, capable of querying and finding the closest city to a provided vector. Enjoy exploring the capabilities of Qdrant with this example!
+
+![app_visualisation](.doc/app_visualisation.png)
