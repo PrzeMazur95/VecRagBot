@@ -20,7 +20,7 @@ And the last command to run is : "docker compose up --build -d"
 
 Succesfully build app process : 
 
-![Build Process](./build_process.png)
+![Build Process](./doc/build_process.png)
 
 After successfully creating the containers :
 
@@ -31,7 +31,7 @@ After successfully creating the containers :
 
 Here is the visualisation of the process inside the vecragbot container : 
 
-![App Process](./app_visualisation.png)
+![App Process](./doc/app_visualisation.png)
 1. You go into the python app container
 2. LLM is being downloaded
 3. Console asks you a question
