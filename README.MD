@@ -1,27 +1,19 @@
-# Vector Search App for CSV Data
+# Ineractive RAG app. Answers your question to provided file
 
-This project demonstrates a vector search application that queries through a provided list of 100 foods in a `food.csv` file. After running the commands below, you will be prompted to provide a text input, and the app will return the closest similar food entry from the database.
+App works as a Question Answer system, based on context data given in article.txt file. After running below commands, you will be asked to put some questions, connected to the file you will provide. App based on given context (your file) and with help of OpenAI LLM will give you an answer.
 
 ## Prerequisites
 
-Make sure you have the following installed:
+Make sure you have the following requirements:
 
 - Docker
 - Docker Compose
+- OpenAI Api key
 
-## CSV File Format
+## .txt file 
 
-You can customize the `food.csv` file as needed, but ensure it follows the proper format. All fields must be provided in the following order:
+You can customize the article.txt file, provide any data you want into it. 
 
-```
-Name,Calories,Fat,Protein,Carbohydrate,Sugar,Fiber
-```
-
-### Example Entry:
-
-```
-Rose donuts,356,11,7.1,56,50,1.2
-```
 
 ## Setup Instructions
 
@@ -44,18 +36,21 @@ If you've previously set up the project and want to start fresh, you'll need to 
    docker rmi vecragbot-pythonapp
    ```
 
-### Step 2: Start the Application
+### Step 2: Start the Aplication
 
-1. **Build and Start the Containers:**
+1. **.envsample:**
+   - Change .envsample into .env, and change there '<your_key>' with your OpenAi Api key - without it app will not work. 
+
+2. **Build and Start the Containers:**
    ```sh
    docker compose up --build -d
    ```
 
    - This command will rebuild images if they already exist, ensuring the containers run on the correct images.
    - If no previous images exist, new ones will be created. 
-   - It will take a while for docker to download and install all necessary dependencies, sentence-transformers package is huge. 
+   - It will take a while for docker to download and install all necessary dependencies.
 
-### Step 3: Run the Vector Search
+### Step 3: Run the App
 
 1. **Access the `vecragbot` Container:**
    Open a new terminal window and run:
@@ -69,11 +64,16 @@ If you've previously set up the project and want to start fresh, you'll need to 
    python3 ./main.py
    ```
 
-   - This script installs all necessary data, creates a collection in Qdrant, vectorizes the data stored in `food.csv`, uploads it to the database, prompts you with a question, and then returns the nearest found answer.
+   - This script :
+    - installs all necessary data 
+    - creates a collection in Qdrant
+    - vectorizes data stored in `article.txt'
+    - uploads it to the database
+    - prompts you with a question, and then returns prepared answer.
 
-### Step 4: Updating the CSV and Rerunning the Script
+### Step 4: Updating the .txt file and rerunning the Script
 
-If you add new food entries to the `food.csv` file, rerun the script to update the database:
+If you add new data to the `article.txt` file, rerun the script to update the database:
 
 ```sh
 python3 ./main.py
@@ -85,17 +85,9 @@ You can manage collections, points, and other database entities using the Qdrant
 
 [http://localhost:6333/dashboard](http://localhost:6333/dashboard)
 
-## Embedding Model
-
-The application uses the following model to create embeddings:
-
-[https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)
 
 1. Containers starting process
 ![containers_starting_process](./doc/containers_starting_process.png)
 
-2. App initialization
-![app_initialization](./doc/app_initialization.png)
-
-3. Querying through provided file
+2. Querying through provided file
 ![querying_provided_file](./doc/started_app.png)

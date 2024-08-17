@@ -1,97 +1,75 @@
-import json
-import csv
+import os
 
-from qdrant_client import QdrantClient
-from qdrant_client.http import models
-from sentence_transformers import SentenceTransformer
+from dotenv import load_dotenv
+from langchain_openai import OpenAI
+from langchain_community.vectorstores import Qdrant
+from langchain_core.vectorstores import VectorStoreRetriever
+from langchain.chains import RetrievalQA as VectorDBQA
+from langchain.embeddings import HuggingFaceEmbeddings
+from typing import Any
 
-COLLECTION_NAME = "Food"
-DIMENSION = 384 #vector dimension for sentence-transformers from hugging face
-EMBEDDING_MODEL = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-QDRANT_CLIENT = QdrantClient(url="http://qdrant:6333")
+load_dotenv()
 
-def generate_embedding(text: str):
-    embeddings = EMBEDDING_MODEL.encode(text)
-    return embeddings
+OPEN_AI_API_KEY = os.getenv('OPEN_AI_API_KEY')
+QDRANT_URL = os.getenv('QDRANT_URL')
+FILENAME = 'article.txt' #name of the file to be processed
+LLM_MODEL = OpenAI(openai_api_key=OPEN_AI_API_KEY) # LLM model to interact with our context
 
-def check_if_collection_exists() -> bool:
-    return QDRANT_CLIENT.collection_exists(collection_name=COLLECTION_NAME)
+def get_embedding_model()->Any:
+    """
+    Returns embedding model, that we will use to embed data from a file to Qdrant
+    """
+    return HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-def read_csv_and_upload_data_to_qdrant() -> None:
-    count = 0
-    payloads = []
-    embds = []
+def get_data_from_file()->list:
+    """
+    Open the file, and assing each line to an list element. 
+    Line.strip() form remove trailing whitespaces
+    """
+    with open(FILENAME, encoding="utf-8") as file:
+        text = [line.strip() for line in file]
+    return text
 
-    with open('./food.csv', mode='r', encoding="utf-8") as file:
-        csv_reader = csv.DictReader(file) #dictReader for key/value pairs in rows
-
-        next(csv_reader) # to skip first/header line in csv
-
-        for row in csv_reader:
-            payloads.append({
-                'name': row['Name'],
-                'calories': row['Calories'],
-                'fat': row['Fat'],
-                'protein': row['Protein'],
-                'carbohydrate': row['Carbohydrate'],
-                'sugar': row['Sugar'],
-                'fiber': row['Fiber']
-            })
-            embds.append(generate_embedding(row['Name']))
-
-            count+=1
-            if count%10==0 and count >0:
-                print(f'Embeddings generated for {count} foods')
-
-    ids = []
-    for x in range(len(payloads)):
-        ids.append(x)
-
-    QDRANT_CLIENT.upsert(
-        collection_name=COLLECTION_NAME,
-        points=models.Batch(
-            ids=ids,
-            payloads=payloads,
-            vectors=embds,
-        ),
+def get_qdrant_vectorstore_with_uploaded_data()->Any:
+    """
+    Return Qdrant instance with uploaded data taken from the file
+    """
+    feeded_qdrant_client = Qdrant.from_texts(
+        get_data_from_file(),
+        get_embedding_model(),
+        url=QDRANT_URL,
+        collection_name="article"
     )
+    return feeded_qdrant_client
 
-def main() -> None:
+def get_retriever_context()->Any:
+    """
+    Assign context with created embeddings from .txt file
+    """
+    return VectorStoreRetriever(vectorstore=get_qdrant_vectorstore_with_uploaded_data())
 
-    if check_if_collection_exists():
-        QDRANT_CLIENT.delete_collection(collection_name=COLLECTION_NAME)
+def get_retrieval_qa_context()->Any:
+    """
+    Combine llm with out context to create a QA system based on our data
+    """
+    return VectorDBQA.from_llm(llm=LLM_MODEL, retriever=get_retriever_context())
 
-    QDRANT_CLIENT.create_collection(
-        collection_name=COLLECTION_NAME,
-        vectors_config=models.VectorParams(size=DIMENSION, distance=models.Distance.COSINE),
-    )
-
-    read_csv_and_upload_data_to_qdrant()
+def main():
+    """
+    Triggers main process initialization
+    """
+    retrieval_qa_context = get_retrieval_qa_context()
 
     while True:
-        search_term = input("What do you like to eat?: ")
-        search_vec = generate_embedding(search_term)
-
-        search_result = QDRANT_CLIENT.search(
-            collection_name=COLLECTION_NAME,
-            query_vector=search_vec,
-            limit=3
-        )
+        question = input("What is your question?: ")
         print()
+        print(retrieval_qa_context.invoke(question)['result'])
 
-        for result in search_result:
-            payload_string = json.dumps(result.payload, indent=4)
-            payload_json = json.loads(payload_string)
-            name = payload_json['name']
-            calories = payload_json['calories']
-            print(f"{name}, contains {calories}kCal/100g, with similarity score: {result.score}")
+        keep_asking = input("Do you have another question?[Y/n]:  ")
 
-        keep_asking = input("Do you have another question?[Y/n]: ")
-
-        if not keep_asking == 'Y' :
-            print("See you again!")
+        if not keep_asking == "Y":
+            print("See you again! ")
             break
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,0 +1,2 @@
+OPEN_AI_API_KEY=<your_key>
+QDRANT_URL='https://qdrant:6333'
