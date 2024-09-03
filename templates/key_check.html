@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block forms %}
+    {%if not is_valid %}
+        <form id="openAiApiKey" method="post" action="{{ url_for('key_check')}}">
+            <div class="row input-group-newsletter">
+                <div>
+                    <label for="formFileLg" class="form-label">Insert you OpenAI api key</label>
+                    {%if is_valid is defined %}
+                    <input class="form-control form-control-lg" id="api_key" type="password" name="api_key" placeholder="Type the key one more time">
+                    {% if session['username'] %}
+                    <h1>Welcome {{ session['username'] }}!</h1>
+                    {% endif %}
+                    {% else %}
+                    <input class="form-control form-control-lg" id="api_key" type="password" name="api_key">
+                    {% endif %}
+                </div>
+                <div class="col-auto"><button class="btn btn-primary" id="submitButton" type="submit">Upload!</button></div>
+        </form>
+    {% endif %}
+{% endblock %}

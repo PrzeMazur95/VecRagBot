@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block forms %}
+    {%if not showChoseFile %}
+        <form id="uploadFileForm" method="post" enctype="multipart/form-data" action="{{ url_for('upload')}}">
+            <div class="row input-group-newsletter">
+                <div>
+                    <label for="formFileLg" class="form-label">Choose PDF or TXT file</label>
+                    <input class="form-control form-control-lg" id="formFileLg" type="file" name="file" accept=".pdf,.txt" required="file">
+                </div>
+                <div class="col-auto"><button class="btn btn-primary" id="submitButton" type="submit">Upload!</button></div>
+        </form>
+    {% endif %}
+{% endblock %}

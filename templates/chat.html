@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block main_title%}
+    Chat with your file
+{% endblock %}
+{% block forms %}
+    {% if show_chat %}
+        <form id="queyForm" method="post" action="{{ url_for('process_query')}}">
+            <div class="col"><input class="form-control" name="query" id="query" type="text" placeholder="Enter your query..." required/></div>
+            <input type="hidden" name="filename" value="{{ filename }}"/>
+            <div class="col-auto"><button class="btn btn-primary" id="submitButton" type="submit">Ask a question!</button></div>
+        </form>
+        {% if answer %}
+            {% block main_text%}
+                {{ answer }} 
+                {% if question_answered %}
+                <form id="nextQuestion" method="post" action="{{ url_for('process_query')}}">
+                    <div class="col-auto"><button class="btn btn-primary text-center" id="submitButton" type="submit">Ask next question!</button></div>
+                    <input type="hidden" name="filename" value="{{ filename }}"/>
+                    <input type="hidden" name="nextQuestion" value="True"/>
+                </form>
+                {% endif %}
+            {% endblock%}
+        {% endif%}
+    {% endif %}
+{% endblock %}

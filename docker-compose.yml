@@ -1,12 +1,4 @@
 services:
-  pythonapp:
-    container_name: vecragbot
-    build: ./python/  
-    stdin_open: true # Keeps the container open to receive user input
-    tty: true # Allocates a pseudo-terminal for the container
-    volumes:
-      - ./python:/usr/app/src
-
   qdrant:
     container_name: qdrant
     image: qdrant/qdrant:latest

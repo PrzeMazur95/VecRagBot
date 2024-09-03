@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block forms %}
+{%if not is_valid %}
+<form id="start_process" method="post" action="{{ url_for('key_check')}}">
+    <div class="row input-group-newsletter">
+        <div>
+            <label for="formFileLg" class="form-label">Start journey!</label>
+            <input class="form-control form-control-lg" id="username" type="text" name="username" placeholder="Type your username">
+        </div>
+        <div class="col-auto"><button class="btn btn-primary" id="submitButton" type="submit">Go!</button></div>
+</form>
+{% endif %}
+{% endblock %}
