@@ -1,101 +1,102 @@
-# Vector Search App for CSV Data
 
-This project demonstrates a vector search application that queries through a provided list of 100 foods in a `food.csv` file. After running the commands below, you will be prompted to provide a text input, and the app will return the closest similar food entry from the database.
+# VecRagBot - chatbot based on provided .pdf or .txt file
 
 ## Prerequisites
 
-Make sure you have the following installed:
+Before starting the project, ensure you have the following tools installed on your system:
 
-- Docker
-- Docker Compose
+1. **Docker** 
+2. **Docker Compose**
+3. **Pyenv** - with Python version `3.12.4` installed.
+4. **Pipenv** 
 
-## CSV File Format
+## Getting Started
 
-You can customize the `food.csv` file as needed, but ensure it follows the proper format. All fields must be provided in the following order:
+Follow these steps to set up and run the application. Run all that commands in main folder of the app:
 
-```
-Name,Calories,Fat,Protein,Carbohydrate,Sugar,Fiber
-```
+### 1. Start Docker Containers
 
-### Example Entry:
+The application uses the Qdrant vector database, which is containerized. To start the required containers, run:
 
-```
-Rose donuts,356,11,7.1,56,50,1.2
-```
-
-## Setup Instructions
-
-### Step 1: Clean Up Existing Docker Containers and Images
-
-If you've previously set up the project and want to start fresh, you'll need to remove any existing Docker containers and images.
-
-1. **Find Container IDs:**
-   ```sh
-   docker container ps -a
-   ```
-
-2. **Stop and Remove Containers:**
-   ```sh
-   docker stop vecragbot qdrant && docker rm vecragbot qdrant
-   ```
-
-3. **Remove the Python App Image:**
-   ```sh
-   docker rmi vecragbot-pythonapp
-   ```
-
-### Step 2: Start the Application
-
-1. **Build and Start the Containers:**
-   ```sh
-   docker compose up --build -d
-   ```
-
-   - This command will rebuild images if they already exist, ensuring the containers run on the correct images.
-   - If no previous images exist, new ones will be created. 
-   - It will take a while for docker to download and install all necessary dependencies, sentence-transformers package is huge. 
-
-### Step 3: Run the Vector Search
-
-1. **Access the `vecragbot` Container:**
-   Open a new terminal window and run:
-   ```sh
-   docker exec -it vecragbot sh
-   ```
-
-2. **Execute the Python Script:**
-   In the container terminal, run:
-   ```sh
-   python3 ./main.py
-   ```
-
-   - This script installs all necessary data, creates a collection in Qdrant, vectorizes the data stored in `food.csv`, uploads it to the database, prompts you with a question, and then returns the nearest found answer.
-
-### Step 4: Updating the CSV and Rerunning the Script
-
-If you add new food entries to the `food.csv` file, rerun the script to update the database:
-
-```sh
-python3 ./main.py
+```bash
+docker-compose up
 ```
 
-## Qdrant UI
+This command will start the Qdrant vector database in a Docker container.
 
-You can manage collections, points, and other database entities using the Qdrant UI:
+### 2. Install Dependencies
 
-[http://localhost:6333/dashboard](http://localhost:6333/dashboard)
+Install all the required Python packages in virtual environment:
 
-## Embedding Model
+```bash
+pipenv install
+```
 
-The application uses the following model to create embeddings:
+This command install all dependencies in your virtual environment, that are provided in Pipfile.lock file.
 
-[https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)
+### 3. Initialize Python Virtual Environment
 
-1. Containers starting process
-![containers_starting_process](./doc/containers_starting_process.png)
+Initialize the Python virtual environment using Pipenv:
 
-2. App initialization
-![app_initialization](./doc/app_initialization.png)
+```bash
+pipenv shell
+```
 
-3. Querying through provided file
-![querying_provided_file](./doc/started_app.png)
+This will activate the virtual environment..
+
+### 4. Start the Application
+
+With the virtual environment active and all dependencies installed, start the application by running:
+
+```bash
+python3 app.py
+```
+
+### 5. Access the Application
+
+Once the application is running, you can access the main page by navigating to the following URL in your web browser:
+
+[http://127.0.0.1:5000/index](http://127.0.0.1:5000/index)
+
+## Conclusion
+
+You should now be able to see the main page of the application. If you encounter any issues, ensure all prerequisites are correctly installed and the commands are executed in the correct order.
+
+
+
+# Application Workflow
+
+Follow the steps below to use the application effectively:
+
+### 1. Username Entry
+
+On the main page, you are asked to provide your username. This is necessary to track your chat history and ensure the application uses the correct collection in the Qdrant database, preventing redundant embedding of your data.
+
+![main page](doc/main_page.png)
+
+### 2. OpenAI API Key Entry
+
+In the first step, you will be prompted to provide your OpenAI API key. This key is essential for the app's operation. We use it once to embed the data provided in a file and to enable the OpenAI-powered chatbot that responds based on the context of your file.
+
+- Your OpenAI account will only be charged once for embedding the file, and each time you submit a query and receive a generated answer.
+- Please create an account on OpenAI, generate your API key, and paste it into the form. More information can be found [here](https://platform.openai.com/api-keys).
+- **Important:** We do not store your API key! It is used only during your active session in the app.
+
+![first step](doc/first_step.png)
+
+### 3. File Upload
+
+In the second step, you will be asked to upload the file you want to query. The application accepts only `.pdf` and `.txt` files. During this step, your file will be embedded and uploaded to the Qdrant database. This step may take some time, depending on the size of the file.
+
+![second step](doc/second_step.png)
+
+### 4. Querying Your File
+
+In the third step, you can start querying the content of your file. After submitting your first query, you can continue asking as many queries as you like.
+
+![third step - question](doc/third_step_question.png)
+![third step - answer](doc/third_step_answer.png)
+
+## Conclusion
+
+### Enjoy using my app! If you have any ideas, create a PR or share them with me, I'll try to extend it! 
