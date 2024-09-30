@@ -12,6 +12,9 @@ FILE_SERVICE = FileService()
 RETRIEVER = Retriever()
 QDRANT_CONNECTOR = QdrantConnection()
 
+if not os.path.exists(FILE_SERVICE.UPLOADED_FILES_DIRECTORY):
+    os.makedirs(FILE_SERVICE.UPLOADED_FILES_DIRECTORY)
+
 @app.route("/index")
 def index():
     print(request.cookies.get('session'))
