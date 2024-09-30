@@ -19,7 +19,7 @@ Follow these steps to set up and run the application. Run all that commands in m
 The application uses the Qdrant vector database, which is containerized. To start the required containers, run:
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 This command will start the Qdrant vector database in a Docker container.
