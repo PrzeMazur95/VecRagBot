@@ -7,8 +7,9 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./app:/app
-      - ./static:/static
+      - ./app:/vecragbot/app
+      - ./static:/vecragbot/static
+      - ./templates:/vecragbot/templates
   qdrant:
     container_name: qdrant
     image: qdrant/qdrant:latest
