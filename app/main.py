@@ -6,22 +6,21 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.messages import AIMessage
 from langchain_community.chat_message_histories import ChatMessageHistory
 from app.service.file_service import FileService
 from app.service.open_ai_service import OpenAiService
-from flask import session, jsonify
+from flask import session
 from app.models.qdrant_connector import QdrantConnection
 
 class Retriever():
-    
+
     def __init__(self):
         self.FILE_SERVICE = FileService(),
         # self.QDRANT_CONNECTION = QdrantConnection(),
         self.OPEN_AI_SERVICE = OpenAiService()
-        
+
     def get_session_history(self, session_id: str) -> BaseChatMessageHistory:
         session_data = session.get(session_id)
         if session_data:
@@ -33,23 +32,23 @@ class Retriever():
 
     def save_session_history(self, session_id: str, history: BaseChatMessageHistory):
         session[session_id] = pickle.dumps(history)
-    
+
     def main(self, filename: str, query: str):
-        
+
         history_session_name = filename + session['username'] + "_collection_name"
-        
+
         QdrantConnector = QdrantConnection()
-        
+
         client = QdrantConnector.client
-        
+
         embedding_model=self.OPEN_AI_SERVICE.get_embeddings_model()
-        
+
         VectorDB = Qdrant(client, collection_name=session[session['username'] + "_collection_name"], embeddings=embedding_model)
-        
+
         retriever = VectorDB.as_retriever()
-        
+
         llm = ChatOpenAI(model="gpt-4o-mini", openai_api_key=session[session['username'] + 'api_key'])
-        
+
         system_prompt = (
             "You are an assistant for question-answering tasks. "
             "Use the following pieces of retrieved context to answer "
@@ -59,7 +58,7 @@ class Retriever():
             "\n\n"
             "{context}"
         )
-        
+
         contextualize_q_system_prompt = (
             "Given a chat history and the latest user question "
             "which might reference context in the chat history, "
@@ -119,4 +118,4 @@ class Retriever():
             print(f"{prefix}: {message.content}\n")
 
         return answer
-        
+

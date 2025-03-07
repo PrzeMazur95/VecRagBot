@@ -11,6 +11,7 @@ langchain-openai = "*"
 langchain-qdrant = "*"
 tiktoken = "*"
 langchain-text-splitters = "*"
+ruff = "*"
 
 [dev-packages]
 
