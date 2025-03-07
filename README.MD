@@ -46,7 +46,9 @@ This will activate the virtual environment..
 
 ### 4. Start the Application
 
-With the virtual environment active and all dependencies installed, start the application by running:
+With the virtual environment active and all dependencies installed, start the application:
+
+#### change .envsample to .env, then run :
 
 ```bash
 python3 app.py

@@ -6,7 +6,7 @@ from app.models.qdrant_connector import QdrantConnection
 from app.main import Retriever
 
 app = Flask(__name__)
-app.secret_key = '_5#y2L"F4Q8z\n\xec]/'
+app.secret_key = os.getenv('SECRET_KEY')
 
 FILE_SERVICE = FileService()
 RETRIEVER = Retriever()
@@ -15,7 +15,7 @@ QDRANT_CONNECTOR = QdrantConnection()
 if not os.path.exists(FILE_SERVICE.UPLOADED_FILES_DIRECTORY):
     os.makedirs(FILE_SERVICE.UPLOADED_FILES_DIRECTORY)
 
-@app.route("/index")
+@app.route("/")
 def index():
     print(request.cookies.get('session'))
     return render_template("index.html")

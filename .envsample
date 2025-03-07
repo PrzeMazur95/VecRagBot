@@ -1,1 +1,2 @@
 QDRANT_URL = http://localhost:6333
+SECRET_KEY = _5#y2L"F4Q8z\n\xec]/

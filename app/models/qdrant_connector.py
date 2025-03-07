@@ -14,6 +14,7 @@ class QdrantConnection:
     """
     Qdrant Connector
     """
+
     def __init__(self, url=None):
         """
         Initialize the Qdrant connection.
@@ -113,28 +114,25 @@ class QdrantConnection:
         :return: Number of points in collection if it exists
         """
         return self.client.count(collection_name).count if self.client.collection_exists(collection_name) else 0
-    
-    
+
     def run(self, collection_name: str, file_name: str):
         if not self.collection_exists(collection_name):
             self.create_collection(collection_name)
-        
+
         self.prepare_points(collection_name, file_name)
-        
-        
+
     def prepare_points(self, collection_name, file_name):
         collection_name = collection_name
 
         payload_id = 0
 
-        data = self.file_service.load_pdf_content(filename=file_name) if file_name.endswith('.pdf') else self.file_service.load_txt_content(filename=file_name)
-
+        data = self.file_service.load_pdf_content(filename=file_name) if file_name.endswith('.pdf') else (
+            self.file_service.load_txt_content(filename=file_name))
 
         if file_name.endswith('.pdf'):
             chunks = self.text_splitter.split_documents(data)
         else:
             chunks = self.text_splitter.split_documents([data])
-            
         for chunk in chunks:
             payload_id += 1
             payload = {"page_content": chunk.page_content, "metadata": chunk.metadata}
@@ -148,5 +146,3 @@ class QdrantConnection:
             ]
 
             self.insert(collection_name=collection_name, points=point)
-
-        
