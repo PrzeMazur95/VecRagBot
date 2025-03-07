@@ -1,0 +1,22 @@
+[tool.ruff]
+# Set the maximum line length to 88 (common convention for Black)
+line-length = 88
+
+# Enable the most common checks for clean, PEP 8 compliant code
+select = [
+    "E",  # Errors (e.g., syntax errors, undefined names)
+    "F",  # PEP 8 style violations
+    "W",  # Warnings (unused imports, undefined variables, etc.)
+    "C",  # Complexity (for maintaining readable code)
+    "N",  # Naming violations (variable and function names)
+    "B",  # Bug risks (e.g., catching exceptions incorrectly)
+    "T",  # Type hints (for missing type annotations)
+]
+
+# Disable specific checks if they are too verbose or unnecessary
+# For example, ignoring the check for docstrings if it's not critical for your project
+extend-ignore = [
+    "D100",  # Ignore missing docstrings in modules
+    "D101",  # Ignore missing docstrings in classes
+    "D102",  # Ignore missing docstrings in functions/methods
+]
