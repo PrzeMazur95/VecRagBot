@@ -7,12 +7,26 @@ Before starting the project, ensure you have the following tools installed on yo
 
 1. **Docker** 
 2. **Docker Compose**
-3. **Pyenv** - with Python version `3.12.4` installed.
-4. **Pipenv** 
 
 ## Getting Started
 
-Follow these steps to set up and run the application. Run all that commands in main folder of the app:
+Follow these steps to set up and run the application. Run all that commands in main folder of the app, we have two ways - <b>full docker</b>, and <b>docker+pipenv</b>:
+
+### Full Docker
+
+```bash
+docker compose --file docker-compose-build.yml up
+```
+it will initialize python app as well as qdrant vector database as docker containers.
+After successful initialization, you can access the main page by hitting: [http://localhost:5000/](http://localhost:5000/)
+
+
+### Docker + Pipenv
+
+install additional dependencies on your system if you don't have them yet:
+
+**Pyenv** - with Python version `3.12.4` installed.<br>
+**Pipenv** 
 
 ### 1. Start Docker Containers
 
@@ -58,7 +72,7 @@ python3 app.py
 
 Once the application is running, you can access the main page by navigating to the following URL in your web browser:
 
-[http://127.0.0.1:5000/index](http://127.0.0.1:5000/index)
+[http://127.0.0.1:5000/](http://127.0.0.1:5000/)
 
 ## Conclusion
 

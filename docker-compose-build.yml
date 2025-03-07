@@ -1,0 +1,20 @@
+services:
+  python:
+    container_name: python
+    build:
+        context: .
+        dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app:/app
+      - ./static:/static
+#    command: ["/bin/bash", "-c", "ls", "-al"]
+  qdrant:
+    container_name: qdrant
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - ./qdrant_data:/qdrant/storage
