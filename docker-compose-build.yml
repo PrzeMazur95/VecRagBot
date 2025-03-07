@@ -9,7 +9,6 @@ services:
     volumes:
       - ./app:/app
       - ./static:/static
-#    command: ["/bin/bash", "-c", "ls", "-al"]
   qdrant:
     container_name: qdrant
     image: qdrant/qdrant:latest
